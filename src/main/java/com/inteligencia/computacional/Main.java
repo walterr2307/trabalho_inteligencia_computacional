@@ -5,9 +5,10 @@ import javafx.scene.layout.Pane;
 import java.util.Scanner;
 
 public class Main {
-    private static int largura, altura;
+    private static int largura = 10, altura = 10;
     private static final Pane root = new Pane();
     private static final Scanner scanner = new Scanner(System.in);
+    private static ObjetoCenario[] objs = new ObjetoCenario[4];
 
     private static int escanearValor(int min, int max, String msg) {
         int valor;
@@ -52,9 +53,9 @@ public class Main {
 
         for (int i = 0; i < objs.length; i++) {
             System.out.println("\nlargura(x), altura(y) = " + largura + ", " + altura);
-            System.out.println("1 - Robô\n2 - Robô Inteligente\n3 - Obstáculo\n4 - Sujeira\n");
+            System.out.println("1 - Robô\n2 - Robô Inteligente\n3 - Sujeira\n");
 
-            tipo_obj = escanearValor(1, 4, "o respectivo objeto do cenário");
+            tipo_obj = escanearValor(1, 3, "o respectivo objeto do cenário");
             x = escanearValor(0, largura - 1, "a posição x");
             y = escanearValor(0, altura - 1, "a posição y");
 
@@ -73,21 +74,42 @@ public class Main {
         return switch (tipo_obj) {
             case 1 -> new Robo(x, y);
             case 2 -> new RoboInteligente(x, y);
-            case 3 -> new Obstaculo(x, y);
             default -> new Sujeira(x, y);
         };
     }
 
+    private static boolean verificarObjetosValidos(ObjetoCenario[] objs) {
+        boolean robo = false, sujeira = false;
+
+        for (ObjetoCenario obj : objs) {
+            if (obj instanceof Robo)
+                robo = true;
+            if (obj instanceof Sujeira)
+                sujeira = true;
+        }
+
+        if (!robo || !sujeira)
+            System.out.println("\n\nDeve haver pelo menos um robô e uma sujeira!\n\n");
+
+        return robo && sujeira;
+    }
+
     public static void main(String[] args) {
         int qtd_objs;
-        ObjetoCenario[] objs;
 
-        largura = escanearValor(3, 10, "a largura");
-        altura = escanearValor(3, 10, "a altura");
-        qtd_objs = escanearValor(1, (largura * altura) / 2, "a quantidade de objetos para o jogo");
+        objs[0] = new Robo(0, 0);
+        objs[1] = new RoboInteligente(1, 1);
+        objs[2] = new Sujeira(2, 2);
+        objs[3] = new Sujeira(3, 3);
 
-        objs = new ObjetoCenario[qtd_objs];
-        comecarLoopObjetos(largura, altura, objs);
+        /*do {
+            largura = escanearValor(3, 10, "a largura");
+            altura = escanearValor(3, 10, "a altura");
+            qtd_objs = escanearValor(1, largura * altura, "a quantidade de objetos para o jogo");
+
+            objs = new ObjetoCenario[qtd_objs];
+            comecarLoopObjetos(largura, altura, objs);
+        } while (!verificarObjetosValidos(objs));*/
 
         Cenario.main(args);
     }
@@ -102,5 +124,9 @@ public class Main {
 
     public static Pane getRoot() {
         return root;
+    }
+
+    public static ObjetoCenario[] getObjetosCenario() {
+        return objs;
     }
 }

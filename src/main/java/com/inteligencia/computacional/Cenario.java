@@ -1,28 +1,91 @@
 package com.inteligencia.computacional;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.Objects;
 
 public class Cenario extends Application {
-    private final int largura = 3, altura = 2;
-    private final Pane root = new Pane();
+
+    private void gerarRobos(ObjetoCenario[] objs) {
+        int i = 0, j = 0, qtd = 0;
+
+        for (ObjetoCenario obj : objs) {
+            if (obj instanceof Robo)
+                ++qtd;
+        }
+
+        Robo[] robos = new Robo[qtd];
+        Sujeira[] sujeiras = new Sujeira[objs.length - qtd];
+
+        for (ObjetoCenario obj : objs) {
+            if (obj instanceof Robo) {
+                robos[i] = (Robo) obj;
+                ++i;
+            } else {
+                sujeiras[j] = (Sujeira) obj;
+                ++j;
+            }
+        }
+
+        iniciarLoop(robos, sujeiras);
+    }
+
+    private void iniciarLoop(Robo[] robos, Sujeira[] sujeiras) {
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.5f), _ -> {
+                    for (Robo robo : robos)
+                        robo.mover(sujeiras);
+                })
+        );
+
+        //timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.setCycleCount(200);
+        timeline.play();
+    }
 
     public void start(Stage stage) {
+        int largura = Main.getLargura(), altura = Main.getAltura();
+        Pane root = Main.getRoot();
+        ObjetoCenario[] objs = Main.getObjetosCenario();
         ImageView img = new ImageView(new Image(Objects.requireNonNull(getClass().
-                getResource("/com/inteligencia/computacional/walpaper.jpg")).toExternalForm()));
+                getResource("/wallpaper.jpg")).toExternalForm()));
 
-        img.setFitWidth(largura * 50f);
-        img.setFitHeight(altura * 50f);
-
+        img.setFitWidth(largura * 60f);
+        img.setFitHeight(altura * 60f);
         root.getChildren().add(img);
+
+        for (int i = 0; i < largura; i++) {
+            for (int j = 0; j < altura; j++) {
+                Rectangle casa = new Rectangle(60f, 60f);
+                casa.setStrokeWidth(4f);
+                casa.setStroke(Color.WHITE);
+                casa.setFill(Color.TRANSPARENT);
+                casa.setWidth(i * 60f + 60f);
+                casa.setHeight(j * 60f + 60f);
+                root.getChildren().add(casa);
+            }
+        }
+
+        for (ObjetoCenario obj : objs)
+            obj.setImagem(obj.gerarImagem());
+
         Scene scene = new Scene(root, img.getFitWidth(), img.getFitHeight());
         stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+
+        gerarRobos(objs);
     }
 
     public static void main(String[] args) {
