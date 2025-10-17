@@ -42,16 +42,28 @@ public class Cenario extends Application {
     }
 
     private void iniciarLoop(Robo[] robos, Sujeira[] sujeiras) {
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(0.5f), _ -> {
-                    for (Robo robo : robos)
-                        robo.mover(sujeiras);
-                })
-        );
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5f), _ -> {
+            for (Robo robo : robos)
+                robo.mover(sujeiras);
 
-        //timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.setCycleCount(200);
+            if (verificarTudoLimpo(sujeiras)) {
+                for (Robo robo : robos)
+                    System.out.println(robo.imprimirInformacoes());
+
+                System.exit(0);
+            }
+        }));
+
+        timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    private boolean verificarTudoLimpo(Sujeira[] sujeiras) {
+        for (Sujeira sujeira : sujeiras) {
+            if (sujeira != null)
+                return false;
+        }
+        return true;
     }
 
     public void start(Stage stage) {

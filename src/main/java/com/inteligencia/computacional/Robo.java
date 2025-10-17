@@ -8,17 +8,31 @@ import javafx.util.Duration;
 
 public class Robo extends ObjetoCenario {
     protected int largura = Main.getLargura(), altura = Main.getAltura();
-    protected int x = 0, y = 0, novo_x = 0, novo_y = 0, pontos = 0;
+    protected int x = 0, y = 0, novo_x = 0, novo_y = 0, pontos = 0, indice_robo;
+    protected static int indice_geral = 1;
     protected final Random random = new Random();
+    protected String tipo_robo = definirTipoRobo();
+    protected Sujeira local_limpo;
 
     public Robo(int x_inicial, int y_inicial) {
         super(x_inicial, y_inicial);
+        indice_robo = indice_geral;
+        ++indice_geral;
     }
 
     public void mover(Sujeira[] sujeiras) {
         definirPosicoes();
         ajustarPosicoes();
         limparSujeira(sujeiras);
+    }
+
+    public String imprimirInformacoes() {
+        return "Robô " + indice_robo + " (" + tipo_robo + ") na posição (" +
+                x_atual + ", " + y_atual + ")" + " | Pontos: " + pontos;
+    }
+
+    protected String definirTipoRobo() {
+        return "Comum";
     }
 
     protected void definirPosicoes() {
@@ -57,29 +71,33 @@ public class Robo extends ObjetoCenario {
         y_atual = novo_y;
     }
 
-    public void limparSujeira(Sujeira[] sujeiras) {
-        boolean limpou = false;
+    protected void limparSujeira(Sujeira[] sujeiras) {
+        local_limpo = null;
 
         for (int i = 0; i < sujeiras.length; i++) {
             if (sujeiras[i] != null) {
                 if (sujeiras[i].getX() == x_atual && sujeiras[i].getY() == y_atual) {
-                    int indice = i;
+                    final int indice = i;
+                    final Sujeira sujeira_salva = sujeiras[i];
+
                     PauseTransition pausa = new PauseTransition(Duration.seconds(0.375));
+                    local_limpo = sujeira_salva;
 
                     pausa.setOnFinished(_ -> {
-                        sujeiras[indice].getImagem().setVisible(false);
-                        sujeiras[indice] = null;
+                        if (sujeira_salva != null) {
+                            sujeira_salva.getImagem().setVisible(false);
+                            sujeiras[indice] = null;
+                        }
                     });
 
                     pausa.play();
-
-                    limpou = true;
                     ++pontos;
+                    break;
                 }
             }
         }
 
-        if (!limpou)
+        if (local_limpo == null)
             --pontos;
     }
 

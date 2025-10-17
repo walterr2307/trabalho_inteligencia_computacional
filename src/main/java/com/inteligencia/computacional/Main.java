@@ -2,13 +2,15 @@ package com.inteligencia.computacional;
 
 import javafx.scene.layout.Pane;
 
+//import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
     private static int largura = 10, altura = 10;
     private static final Pane root = new Pane();
     private static final Scanner scanner = new Scanner(System.in);
-    private static ObjetoCenario[] objs = new ObjetoCenario[4];
+    private static ObjetoCenario[] objs;
+    //protected static final Random random = new Random();
 
     private static int escanearValor(int min, int max, String msg) {
         int valor;
@@ -97,19 +99,16 @@ public class Main {
     public static void main(String[] args) {
         int qtd_objs;
 
-        objs[0] = new Robo(0, 0);
-        objs[1] = new RoboInteligente(1, 1);
-        objs[2] = new Sujeira(2, 2);
-        objs[3] = new Sujeira(3, 3);
+        //objs = funcaoProvisoria();
 
-        /*do {
+        do {
             largura = escanearValor(3, 10, "a largura");
             altura = escanearValor(3, 10, "a altura");
             qtd_objs = escanearValor(1, largura * altura, "a quantidade de objetos para o jogo");
 
             objs = new ObjetoCenario[qtd_objs];
             comecarLoopObjetos(largura, altura, objs);
-        } while (!verificarObjetosValidos(objs));*/
+        } while (!verificarObjetosValidos(objs));
 
         Cenario.main(args);
     }
@@ -129,4 +128,31 @@ public class Main {
     public static ObjetoCenario[] getObjetosCenario() {
         return objs;
     }
+
+    /*private static ObjetoCenario[] funcaoProvisoria() {
+        boolean[][] pos_registradas = new boolean[10][10];
+        ObjetoCenario[] objs = new ObjetoCenario[50];
+
+        objs[0] = new Robo(0, 0);
+        objs[1] = new RoboInteligente(1, 1);
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++)
+                pos_registradas[i][j] = false;
+        }
+
+        for (int i = 2; i < 50; i++) {
+            int x = random.nextInt(8) + 2, y = random.nextInt(8) + 2;
+
+            if (pos_registradas[x][y]) {
+                --i;
+                continue;
+            }
+
+            objs[i] = new Sujeira(x, y);
+            pos_registradas[x][y] = true;
+        }
+
+        return objs;
+    }*/
 }
