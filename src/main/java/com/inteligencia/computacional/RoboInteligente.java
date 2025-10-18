@@ -44,6 +44,9 @@ public class RoboInteligente extends Robo {
             for (int j = -3; j <= 3; j++) {
                 int soma_x = x_atual + i, soma_y = y_atual + j;
 
+                if (i == 0 && j == 0 || soma_x < 0 || soma_y < 0 || soma_x >= largura || soma_y >= altura)
+                    continue;
+
                 for (Sujeira sujeira : sujeiras) {
                     if (sujeira.getX() == soma_x && sujeira.getY() == soma_y && !sujeiras_registradas.contains(sujeira))
                         sujeiras_registradas.add(sujeira);
