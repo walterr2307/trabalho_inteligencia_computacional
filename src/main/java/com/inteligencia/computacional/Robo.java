@@ -1,5 +1,6 @@
 package com.inteligencia.computacional;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.animation.PauseTransition;
@@ -12,7 +13,7 @@ public class Robo extends ObjetoCenario {
     protected static int indice_geral = 1;
     protected final Random random = new Random();
     protected String tipo_robo = definirTipoRobo();
-    protected Sujeira local_limpo;
+    protected Sujeira sujeira_registrada;
 
     public Robo(int x_inicial, int y_inicial) {
         super(x_inicial, y_inicial);
@@ -20,7 +21,7 @@ public class Robo extends ObjetoCenario {
         ++indice_geral;
     }
 
-    public void mover(Sujeira[] sujeiras) {
+    public void mover(ArrayList<Sujeira> sujeiras) {
         definirPosicoes();
         ajustarPosicoes();
         limparSujeira(sujeiras);
@@ -71,33 +72,24 @@ public class Robo extends ObjetoCenario {
         y_atual = novo_y;
     }
 
-    protected void limparSujeira(Sujeira[] sujeiras) {
-        local_limpo = null;
+    protected void limparSujeira(ArrayList<Sujeira> sujeiras) {
+        sujeira_registrada = null;
 
-        for (int i = 0; i < sujeiras.length; i++) {
-            if (sujeiras[i] != null) {
-                if (sujeiras[i].getX() == x_atual && sujeiras[i].getY() == y_atual) {
-                    final int indice = i;
-                    final Sujeira sujeira_salva = sujeiras[i];
+        for (Sujeira sujeira : sujeiras) {
+            if (sujeira.getX() == x_atual && sujeira.getY() == y_atual) {
+                PauseTransition pausa = new PauseTransition(Duration.seconds(0.375));
 
-                    PauseTransition pausa = new PauseTransition(Duration.seconds(0.375));
-                    local_limpo = sujeira_salva;
+                pausa.setOnFinished(_ -> sujeira.getImagem().setVisible(false));
+                pausa.play();
 
-                    pausa.setOnFinished(_ -> {
-                        if (sujeira_salva != null) {
-                            sujeira_salva.getImagem().setVisible(false);
-                            sujeiras[indice] = null;
-                        }
-                    });
-
-                    pausa.play();
-                    ++pontos;
-                    break;
-                }
+                sujeira_registrada = sujeira;
+                sujeiras.remove(sujeira);
+                ++pontos;
+                break;
             }
         }
 
-        if (local_limpo == null)
+        if (sujeira_registrada == null)
             --pontos;
     }
 

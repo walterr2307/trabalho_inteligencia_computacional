@@ -3,7 +3,7 @@ package com.inteligencia.computacional;
 import java.util.ArrayList;
 
 public class RoboInteligente extends Robo {
-    private final ArrayList<Sujeira> locais_sujos = new ArrayList<>();
+    private final ArrayList<Sujeira> sujeiras_registradas = new ArrayList<>();
 
     public RoboInteligente(int x_inicial, int y_inicial) {
         super(x_inicial, y_inicial);
@@ -17,62 +17,51 @@ public class RoboInteligente extends Robo {
         return "Inteligente";
     }
 
-    public void mover(Sujeira[] sujeiras) {
+    public void mover(ArrayList<Sujeira> sujeiras) {
         super.mover(sujeiras);
         registrarSujeira(sujeiras);
+        sujeiras_registradas.removeIf(sujeira -> sujeira.getX() == x_atual && sujeira.getY() == y_atual);
     }
 
     protected void definirPosicoes() {
-        if (locais_sujos.isEmpty())
+        if (sujeiras_registradas.isEmpty())
             super.definirPosicoes();
         else
-            seguirSujeira();
+            seguirSujeira(sujeiras_registradas.getFirst());
     }
 
-    protected void limparSujeira(Sujeira[] sujeiras) {
+    protected void limparSujeira(ArrayList<Sujeira> sujeiras) {
         super.limparSujeira(sujeiras);
-
-        if (local_limpo != null)
-            locais_sujos.remove(local_limpo);
+        sujeiras_registradas.remove(sujeira_registrada);
     }
 
-    private void registrarSujeira(Sujeira[] sujeiras) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                int x_soma = x_atual + i, y_soma = y_atual + j;
-
-                if ((i == 0 && j == 0) || x_soma < 0 || x_soma >= largura || y_soma < 0 || y_soma >= altura)
-                    continue;
+    private void registrarSujeira(ArrayList<Sujeira> sujeiras) {
+        for (int i = -3; i <= 3; i++) {
+            for (int j = -3; j <= 3; j++) {
+                int soma_x = x_atual + i, soma_y = y_atual + j;
 
                 for (Sujeira sujeira : sujeiras) {
-                    if (sujeira != null) {
-                        if (sujeira.getX() == x_soma && sujeira.getY() == y_soma) {
-                            locais_sujos.add(sujeira);
-                            locais_sujos.add(sujeira);
-                        }
-                    }
+                    if (sujeira.getX() == soma_x && sujeira.getY() == soma_y && !sujeiras_registradas.contains(sujeira))
+                        sujeiras_registradas.add(sujeira);
                 }
             }
         }
     }
 
-    private void seguirSujeira() {
-        Sujeira local_sujo = locais_sujos.getFirst();
+    private void seguirSujeira(Sujeira sujeira) {
+        x = sujeira.getX() - x_atual;
+        y = sujeira.getY() - y_atual;
 
-        x = local_sujo.getX() - x_atual;
-        y = local_sujo.getY() - y_atual;
-
-        if (x > 1)
-            x = 1;
         if (x < -1)
             x = -1;
-        if (y > 1)
-            y = 1;
+        if (x > 1)
+            x = 1;
         if (y < -1)
             y = -1;
+        if (y > 1)
+            y = 1;
 
         novo_x = x_atual + x;
         novo_y = y_atual + y;
-        locais_sujos.remove(local_sujo);
     }
 }

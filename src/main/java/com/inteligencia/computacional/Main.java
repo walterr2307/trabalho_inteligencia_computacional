@@ -2,15 +2,13 @@ package com.inteligencia.computacional;
 
 import javafx.scene.layout.Pane;
 
-//import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-    private static int largura = 10, altura = 10;
+    private static int largura, altura;
     private static final Pane root = new Pane();
     private static final Scanner scanner = new Scanner(System.in);
     private static ObjetoCenario[] objs;
-    //protected static final Random random = new Random();
 
     private static int escanearValor(int min, int max, String msg) {
         int valor;
@@ -44,7 +42,7 @@ public class Main {
         return valor;
     }
 
-    private static void comecarLoopObjetos(int largura, int altura, ObjetoCenario[] objs) {
+    private static void comecarLoopObjetos(int largura, int altura) {
         int x, y, tipo_obj;
         boolean[][] posicoes_registradas = new boolean[largura][altura];
 
@@ -80,7 +78,7 @@ public class Main {
         };
     }
 
-    private static boolean verificarObjetosValidos(ObjetoCenario[] objs) {
+    private static boolean verificarObjetosValidos() {
         boolean robo = false, sujeira = false;
 
         for (ObjetoCenario obj : objs) {
@@ -99,16 +97,14 @@ public class Main {
     public static void main(String[] args) {
         int qtd_objs;
 
-        //objs = funcaoProvisoria();
-
         do {
             largura = escanearValor(3, 10, "a largura");
             altura = escanearValor(3, 10, "a altura");
             qtd_objs = escanearValor(1, largura * altura, "a quantidade de objetos para o jogo");
 
             objs = new ObjetoCenario[qtd_objs];
-            comecarLoopObjetos(largura, altura, objs);
-        } while (!verificarObjetosValidos(objs));
+            comecarLoopObjetos(largura, altura);
+        } while (!verificarObjetosValidos());
 
         Cenario.main(args);
     }
@@ -128,31 +124,4 @@ public class Main {
     public static ObjetoCenario[] getObjetosCenario() {
         return objs;
     }
-
-    /*private static ObjetoCenario[] funcaoProvisoria() {
-        boolean[][] pos_registradas = new boolean[10][10];
-        ObjetoCenario[] objs = new ObjetoCenario[50];
-
-        objs[0] = new Robo(0, 0);
-        objs[1] = new RoboInteligente(1, 1);
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++)
-                pos_registradas[i][j] = false;
-        }
-
-        for (int i = 2; i < 50; i++) {
-            int x = random.nextInt(8) + 2, y = random.nextInt(8) + 2;
-
-            if (pos_registradas[x][y]) {
-                --i;
-                continue;
-            }
-
-            objs[i] = new Sujeira(x, y);
-            pos_registradas[x][y] = true;
-        }
-
-        return objs;
-    }*/
 }

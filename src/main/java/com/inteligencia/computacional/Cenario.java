@@ -13,12 +13,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Cenario extends Application {
 
     private void gerarRobos(ObjetoCenario[] objs) {
-        int i = 0, j = 0, qtd = 0;
+        int i = 0, qtd = 0;
 
         for (ObjetoCenario obj : objs) {
             if (obj instanceof Robo)
@@ -26,27 +27,26 @@ public class Cenario extends Application {
         }
 
         Robo[] robos = new Robo[qtd];
-        Sujeira[] sujeiras = new Sujeira[objs.length - qtd];
+        ArrayList<Sujeira> sujeiras = new ArrayList<>();
 
         for (ObjetoCenario obj : objs) {
             if (obj instanceof Robo) {
                 robos[i] = (Robo) obj;
                 ++i;
             } else {
-                sujeiras[j] = (Sujeira) obj;
-                ++j;
+                sujeiras.add((Sujeira) obj);
             }
         }
 
         iniciarLoop(robos, sujeiras);
     }
 
-    private void iniciarLoop(Robo[] robos, Sujeira[] sujeiras) {
+    private void iniciarLoop(Robo[] robos, ArrayList<Sujeira> sujeiras) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.5f), _ -> {
             for (Robo robo : robos)
                 robo.mover(sujeiras);
 
-            if (verificarTudoLimpo(sujeiras)) {
+            if (sujeiras.isEmpty()) {
                 for (Robo robo : robos)
                     System.out.println(robo.imprimirInformacoes());
 
@@ -56,14 +56,6 @@ public class Cenario extends Application {
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-    }
-
-    private boolean verificarTudoLimpo(Sujeira[] sujeiras) {
-        for (Sujeira sujeira : sujeiras) {
-            if (sujeira != null)
-                return false;
-        }
-        return true;
     }
 
     public void start(Stage stage) {
