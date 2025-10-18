@@ -20,7 +20,7 @@ public class RoboInteligente extends Robo {
     public void mover(ArrayList<Sujeira> sujeiras) {
         super.mover(sujeiras);
         registrarSujeira(sujeiras);
-        sujeiras_registradas.removeIf(sujeira -> sujeira.getX() == x_atual && sujeira.getY() == y_atual);
+        removerRegistroSujeira();
     }
 
     protected void definirPosicoes() {
@@ -30,9 +30,13 @@ public class RoboInteligente extends Robo {
             seguirSujeira(sujeiras_registradas.getFirst());
     }
 
-    protected void limparSujeira(ArrayList<Sujeira> sujeiras) {
-        super.limparSujeira(sujeiras);
-        sujeiras_registradas.remove(sujeira_registrada);
+    private void removerRegistroSujeira() {
+        for (Sujeira sujeira : sujeiras_registradas) {
+            if (sujeira.getX() == x_atual && sujeira.getY() == y_atual) {
+                sujeiras_registradas.remove(sujeira);
+                break;
+            }
+        }
     }
 
     private void registrarSujeira(ArrayList<Sujeira> sujeiras) {

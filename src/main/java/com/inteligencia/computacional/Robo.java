@@ -13,7 +13,6 @@ public class Robo extends ObjetoCenario {
     protected static int indice_geral = 1;
     protected final Random random = new Random();
     protected String tipo_robo = definirTipoRobo();
-    protected Sujeira sujeira_registrada;
 
     public Robo(int x_inicial, int y_inicial) {
         super(x_inicial, y_inicial);
@@ -47,19 +46,11 @@ public class Robo extends ObjetoCenario {
         TranslateTransition mover = new TranslateTransition(Duration.seconds(0.25f), img);
 
         if (novo_x < 0 || novo_x >= largura) {
-            if (novo_x < 0)
-                novo_x = 0;
-            else
-                novo_x = largura - 1;
-
+            novo_x = x_atual;
             x = 0;
         }
         if (novo_y < 0 || novo_y >= altura) {
-            if (novo_y < 0)
-                novo_y = 0;
-            else
-                novo_y = altura - 1;
-
+            novo_y = y_atual;
             y = 0;
         }
 
@@ -73,7 +64,7 @@ public class Robo extends ObjetoCenario {
     }
 
     protected void limparSujeira(ArrayList<Sujeira> sujeiras) {
-        sujeira_registrada = null;
+        boolean limpou = false;
 
         for (Sujeira sujeira : sujeiras) {
             if (sujeira.getX() == x_atual && sujeira.getY() == y_atual) {
@@ -82,14 +73,14 @@ public class Robo extends ObjetoCenario {
                 pausa.setOnFinished(_ -> sujeira.getImagem().setVisible(false));
                 pausa.play();
 
-                sujeira_registrada = sujeira;
                 sujeiras.remove(sujeira);
+                limpou = true;
                 ++pontos;
                 break;
             }
         }
 
-        if (sujeira_registrada == null)
+        if (!limpou)
             --pontos;
     }
 
